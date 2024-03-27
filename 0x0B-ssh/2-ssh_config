@@ -1,4 +1,5 @@
-FowardAgent yes
-RSAAuthentication no
-PasswordAuthentication no
-IdentityFile ~/.ssh/school
+Host 18.210.17.35
+	FowardAgent yes
+	RSAAuthentication no
+	PasswordAuthentication no
+	IdentityFile ~/.ssh/school
