@@ -1,14 +1,16 @@
-#!/usr/bin/env bash
-#Displays information about domains
+ #!/usr/bin/env bash
+ # print domains and subdomains
 
-LIST=( "www" "lb-01" "web-01" "web-02" )
+print_domain_subdomain () {
+	dig "$1" | grep -A1 'ANSWER SECTION:' | sed -r "s/$1./$2/g" | awk -F" " ' NR==2 { print "The subdomain " $1 " is a " $4 " record and points to " $5 }'
+}
 
-if [ $# -eq 2 ] ; then
-    echo -n "The subdomain $2 "
-    dig $2.$1 | grep -A1 'ANSWER SECTION:' | grep -v 'ANSWER SECTION:' | awk '{print "is a", $4, "record and points to", $5}'
+if [ "$#" -eq 2 ]
+then
+	print_domain_subdomain "$2.$1" "$2"
 else
-    for i in "${LIST[@]}" ; do
-	echo -n "The subdomain $i "
-	dig $i.$1 | grep -A1 'ANSWER SECTION:' | grep -v 'ANSWER SECTION:' | awk '{print "is a", $4, "record and points to", $5}'
-    done
+	print_domain_subdomain "www.$1" "www"
+	print_domain_subdomain "1b-01.$1" "1b-01"
+	print_domain_subdomain "web-01.$1" "web-01"
+	print_domain_subdomain "web-02.$1" "web-02"
 fi
