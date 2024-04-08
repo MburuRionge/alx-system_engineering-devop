@@ -33,7 +33,7 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
-frontend clickviral-frontend
+frontend africdigital-frontend
         bind *:80
         mode http
         http-request redirect scheme https code 301 unless { ssl_fc }
@@ -41,7 +41,7 @@ frontend clickviral-frontend
         default_backend clickviral-backend
 
 frontend africdigital-frontend-https
-        bind *:443 ssl crt /etc/haproxy/certs/africdigital.tech
+        bind *:443 ssl crt /etc/haproxy/certs/africdigital.tech.pem
         http-request set-header X-Forwarded-Proto https
         default_backend africdigital-backend
 

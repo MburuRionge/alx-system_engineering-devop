@@ -41,11 +41,11 @@ frontend africdigital-frontend
         default_backend africdigital-backend
 
 frontend africdigital-frontend-https
-        bind *:443 ssl crt /etc/haproxy/certs/africdigital.tech
+        bind *:443 ssl crt /etc/haproxy/certs/africdigital.tech.pem
         http-request set-header X-Forwarded-Proto https
         default_backend africdigital-backend
 
-backend clickviral-backend
+backend africdigital-backend
         balance roundrobin
         server 427159-web-01 54.157.176.195:80 check
         server 427159-web-02 52.91.182.133:80 check
