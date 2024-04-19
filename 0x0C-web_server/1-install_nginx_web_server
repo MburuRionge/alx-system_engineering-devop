@@ -1,6 +1,5 @@
 #!#/usr/bin/env bash
 # Install nginx web server
-# Replace default page with Hello world!
 
 sudo apt-get update
 sudo apt-get install nginx
@@ -11,4 +10,4 @@ echo "Hello World!" | sudo tee /var/www/html/index.html
 #testing nginx configurations
 sudo nginx -t
 
-sudo service nginx reload
+sudo service nginx restaryt
