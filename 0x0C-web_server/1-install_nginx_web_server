@@ -1,17 +1,14 @@
-#!/usr/bin/env bash
+#!#/usr/bin/env bash
 # Install nginx web server
 # Replace default page with Hello world!
-echo -e "updating and installing Nginx.\n"
-sudo apt-get update -y -qq && \
-	sudo apt-get install nginx -y
 
-echo -e "\nSetting up some minor stuff.\n"
+sudo apt-get update
+sudo apt-get install nginx
+sudo ufw 'Nginx HTTP'
 
-sudo service nginx start
-sudo ufw allow 'Nginx HTTP'
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
-cp /var/www/html/index.nginx.debian.html /var/www/html/index.nginx.debian.html.bckp
-echo -e "Hello World!" | dd status=none of=/var/www/html/index.nginx.debian.html
-sudo service nginx restart
-echo -e "\nCompleted.\n"
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+#testing nginx configurations
+sudo nginx -t
+
+sudo service nginx reload
