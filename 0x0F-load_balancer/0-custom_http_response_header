@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 #create or add a custom Nginx response header.
-FILE=/etc/nginx/sites-available/default
 
-
+# install nginx
 sudo apt-get -y update
 sudo apt-get -y install nginx
-sudo sed -i "23i \\\tadd_header X-Served-By \$hostname;" $FILE
+
+string_02="server_name _;\n\trewrite ^\/redirect_me https:\/\/github.com\/mbururionge permanent;"
+
+sudo sed -i "s/server_name _;/$string_02/" /etc/nginx/sites-enabled/default
+
+#error page
+
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+#http response header
+sudo sed -i "server_name _;/a add_header X-Served-By $HOSTNAME;" /etc/nginx/sites-enabled/default
+
+#test
+sudo nginx -t
+
+#implement changes
 sudo service nginx restart
