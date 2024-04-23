@@ -1,43 +1,30 @@
 #!/usr/bin/python3
-"""Given an Employee ID, returns information
-about his/her TODO list progress.
+"""
+using this REST API, for a given employee ID, returns information about his/her TODO list progress.
 """
 import requests
-from sys import argv
+import sys
 
-if __name__ == '__main__':
-    try:
-        emp_id = int(argv[1])
-    except ValueError:
-        exit()
 
-    api_url = 'https://jsonplaceholder.typicode.com'
-    user_uri = '{api}/users/{id}'.format(api=api_url, id=emp_id)
-    todo_uri = '{user_uri}/todos'.format(user_uri=user_uri)
+def info():
+    emp = requests.get('https://jsonplaceholder.typicode.com/users/{}'.format(sys.argv[1]))
+    name = requests.get('name')
+    tasks = requests.get('https://jsonplaceholder.typicode.com/todos')
+    tasks = tasks.json()
+    complete = 0
+    titles = []
+    total = 0
+    for task in tasks:
+        if task['userId'] == int(sys.argv[1]):
+            if task['completed'] is True:
+                complete += 1
+                titles.append(task['title'])
+            total += 1
+    print("Employee {} is done with tasks({}/{}):".format(name, complete, total))
+    for title in titles:
+        print('\t ', end="")
+        print(title)
 
-    # User Response
-    res = requests.get(user_uri).json()
 
-    # Name of the employee
-    name = res.get('name')
-
-    # User TODO Response
-    res = requests.get(todo_uri).json()
-
-    # Total number of tasks, the sum of completed and non-completed tasks
-    total = len(res)
-
-    # Number of non-completed tasks
-    non_completed = sum([elem['completed'] is False for elem in res])
-
-    # Number of completed tasks
-    completed = total - non_completed
-
-    # Formatting the expected output
-    str = "Employee {emp_name} is done with tasks({completed}/{total}):"
-    print(str.format(emp_name=name, completed=completed, total=total))
-
-    # Printing completed tasks
-    for elem in res:
-        if elem.get('completed') is True:
-            print('\t', elem.get('title'))
+if __name__ == "__main__":
+    info()
