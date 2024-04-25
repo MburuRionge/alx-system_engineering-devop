@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # web debugging scripts
 pkill nginx
-sed -i 's/8080 default_server/80 default_server/' /etc/nginx/sites-enabled/default
-sudo service nginx restart
+if grep -q 'listen 80 default_server' /etc/nginx/sites-enabled/default; then
+	echo "Nginx is already configured to listen on port 80."
+else
+	sed -i 's/8080 default_server/80 default_server/' /etc/nginx/sites-enabled/default
+	sudo service nginx restart
+	echo "Nginx configuration updated to listen to port 80."
+fi
