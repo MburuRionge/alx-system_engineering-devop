@@ -1,29 +1,49 @@
 #!/usr/bin/python3
-"""
-using this REST API, for a given employee ID, returns information about his/her TODO list progress.
-"""
+'''
+gathers information about an employee by ID and returns their TODO progress
+'''
 import requests
 import sys
 
 
 def info():
-    emp = requests.get('https://jsonplaceholder.typicode.com/users/{}'.format(sys.argv[1]))
-    name = requests.get('name')
-    tasks = requests.get('https://jsonplaceholder.typicode.com/todos')
-    tasks = tasks.json()
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <employee_id>")
+        sys.exit(1)
+
+    try:
+        emp_id = int(sys.argv[1])
+    except ValueError:
+        print("Error: Employee ID must be an integer.")
+        sys.exit(1)
+
+    emp_response = requests.get(f'https://jsonplaceholder.typicode.com/users/{emp_id}')
+    if emp_response.status_code != 200:
+        print(f"Error: Failed to retrieve employee information. Status code: {emp_response.status_code}")
+        sys.exit(1)
+
+    employee_data = emp_response.json()
+    name = employee_data.get('name')
+    
+    tasks_response = requests.get('https://jsonplaceholder.typicode.com/todos')
+    if tasks_response.status_code != 200:
+        print(f"Error: Failed to retrieve task information. Status code: {tasks_response.status_code}")
+        sys.exit(1)
+
+    tasks_data = tasks_response.json()
     complete = 0
     titles = []
     total = 0
-    for task in tasks:
-        if task['userId'] == int(sys.argv[1]):
-            if task['completed'] is True:
+    for task in tasks_data:
+        if task['userId'] == emp_id:
+            if task['completed']:
                 complete += 1
                 titles.append(task['title'])
             total += 1
-    print("Employee {} is done with tasks({}/{}):".format(name, complete, total))
+
+    print(f"Employee {name} is done with tasks ({complete}/{total}):")
     for title in titles:
-        print('\t ', end="")
-        print(title)
+        print('\t', title)
 
 
 if __name__ == "__main__":
