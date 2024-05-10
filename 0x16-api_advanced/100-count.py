@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-import requests
-import sys
 """
 Module to interface with the reddit api
 """
+import requests
+import sys
 
 
-def count_words(subreddit, word_list=[], after=None, all_results=[]):
+def count_words(subreddit, word_list, after=None, counts=()):
     """
     Uses the reddit api to get a count of search terms from subreddit hot posts
     """
