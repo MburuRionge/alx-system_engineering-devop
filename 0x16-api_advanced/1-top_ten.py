@@ -17,26 +17,32 @@ def top_ten(subreddit):
                                                         subreddit=subreddit)
 
     # Set an User-Agent
-    user_agent = {'User-Agent': 'Python/requests'}
+    user_agent = {'User-Agent': 'MyRedditBot/1.0'}
 
     # Set the Query Strings to Request
-    payload = {'limit': '10'}
+    params = {'limit': '10'}
 
     # Get the Response of the Reddit API
     res = requests.get(api_uri, headers=user_agent,
-                        params=payload, allow_redirects=False)
+                        params=params, allow_redirects=False)
 
     # Checks if the subreddit is invalid
-    if res.status_code in [302, 404]:
+    if res.status_code != 200:
         print('None')
-    else:
-        res_json = res.json()
+        return
 
-        if res_json.get('data') and res_json.get('data').get('children'):
-            # Get the 10 hot posts of the subreddit
-            hot_posts = res_json.get('data').get('children')
+    #parse JSON response
+    data= res.json()
 
-            # Print each hot post title
-            for post in hot_posts:
-                if post.get('data') and post.get('data').get('title'):
-                    print(post.get('data').get('title'))
+    # check for errors in the JSON response
+    if 'error' in data:
+        print('None')
+        return
+
+    # Extract post titles and print them
+    posts = data.get('data', {}).get('children', [])
+    for post in posts:
+        post_data = post.get('data', {})
+        title = post_data.get('title')
+        if title:
+            print(title)
