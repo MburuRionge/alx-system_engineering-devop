@@ -1,0 +1,42 @@
+A postmortem (or post-mortem) is a process intended to help you learn from past incidents. It typically involves an analysis or discussion soon after an event has taken place.
+Postmortems typically involve blame-free analysis and discussion soon after an incident or event has taken place. The aim of the postmortem is not to find wrong doer but comes from helping institutionalize a culture of continuous improvement. This way, teams are better prepared when another incident inevitably occurs with mission- or business-critical systems.
+Now lets review an incident that happened in my organization Cyber Connections, an application that connects organizations to cyber security firms and experts, giving multiple options to an organization to choose from, which cyber security firm is the best partner hence reducing the amount of time it would take, cost, risk to an organization to stay secure.
+		Issue Summary
+From 9:23 AM to 10:30 AM EAT, requests to access our application software were down and it resulted in 500 error response messages. This affected all our users on the platform as they could not transfer cash on the platform, deposit or withdraw their money. The root cause was an invalid change to the configuration file of the web servers facilitating transaction, by pushing it to production without testing the code first.
+		Timeline
+9:17 AM: Configuration push begins
+9:23 AM: Transaction outage begins and the an access failure was detected
+9:24 AM: The whole development team was alerted
+9:25 AM: The issue was detected by a customer complain through our emails, frequent calls and social media sites
+9:26 AM: We communicated back to the public acknowledging their issues  and promised to deal with them.
+9:30 AM: The team that was tasked to check, recheck and test, were the senior members in the devops team
+9:36 AM: First action was to check for a bug and test the configuration system files, especially those that the interns have access to so as to narrow down the scope of the operation.
+9:38 AM: The misleading debugging paths that were taken were on checking on the load balancers configuration files, Database and third-party services and API misintegration.
+9:40 AM: The root cause of the problem was an invalid change to the system configuration files and the web-servers facilitating transactions were taken down, hence the servers couldn’t receive the request from the users for a smooth operation.
+9:45 AM: When the bug was detected it was fixed and the configuration files were first tested.
+9:47 AM: We attempted to rollback the configuration change and failed.
+9:48 AM: What followed next was integration testing with other system components of the application software. That is, ensuring third-party services and API integrations communicate with each other
+9:52 AM: We pushed all the changes to the production and deployed our code.
+9:55 AM: Successful configuration change rollback
+10:00 AM: Server restarts and the application software is back up.
+10:21 AM: We inform the public about the success and the steps to take to update the application software.
+10:30 AM: The users were back to transacting as business as usual.
+
+
+
+		Root Cause Analysis and Resolution
+At 9:17 AM EAT, a configuration change was inadvertently released to our production environment without first being tested. The change specified an invalid address for the authentication servers in the production. This exposed a bug in the authentication libraries which caused them to block permanently while attempting to transact through our system.In addition the internal monitoring systems permanently blocked on this call to the authentication library.
+The combination of the bug and configuration error quickly caused all the serving transaction threads to be consumed.Transactions become unavailable as one could not deposit, withdraw or pay for a service.The servers began hanging and restarting as they attempted to recover and at 9:23 AM EAT, the service outage had began.
+At 9:23 AM EAT, the customers complained through our emails and social media sites alerted our engineers who investigated and quickly escalated the issue. By 9:40 AM EAT, the incident response team has identified that the monitoring system were exacerbating the problem caused by this bug
+At 9:47 AM EAT, we attempted to rollback the problematic configuration change.This rollback failed due to complexity in the configuration system which caused our security checks to reject the rollback. These problems were addressed successfully and rolled back at 9:55 AM.
+Some transactions started to slowly recover, and we determined that the overall recovery would be faster by a restart of all web servers facilitating transactions. To help with recovery we carried out integration. To avoid any cascading failures from a wide scale restart, we restarted the servers at 10:00 AM, and by 10:30 AM all the transaction was restored and now users could deposit, withdraw and pay for a cyber security service.
+
+
+		Corrective and Preventative Measures
+In the last one week, we have conducted an internal review and analysis of the outage. The following are actions we are taking to address the underlying causes of the issue and to help prevent recurrence and improve response times:
+Disable the current configuration release mechanism until safer measures are implemented. (Completed)
+Programmatically enforce staged rollouts of all configuration changes
+Improve process for auditing all high-risk configuration options
+Add a faster rollback mechanism and improve the traffic ramp-up process, so any future problems of this type can be corrected quickly.
+Develop better mechanisms for quickly delivering status notifications during incidents.
+Change rollback process to be quicker and more robust
